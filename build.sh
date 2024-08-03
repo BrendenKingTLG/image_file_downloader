@@ -1,6 +1,12 @@
-# Determine date range for tagging
 export DATE_TAG=$(date +%Y%m%d)
 
-# Build the image
-docker build -t osm-downloader:${DATE_TAG} .
-docker run --rm -v $(pwd):/app osm-downloader:${DATE_TAG}
+docker build --no-cache -t osm-downloader:${DATE_TAG} .
+
+CONTAINER_ID=$(docker create osm-downloader:${DATE_TAG})
+
+
+docker cp ${CONTAINER_ID}:/app/last_downloaded.txt ./last_downloaded.txt
+
+docker rm -v ${CONTAINER_ID}
+
+echo "File last_updates has been copied to the local directory."
